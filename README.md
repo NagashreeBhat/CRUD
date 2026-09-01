@@ -34,6 +34,14 @@ mysql -u root -p < database/schema.sql
 This creates a `contact_db` database with a `contacts` table
 (`id`, `name`, `address`, `phone`).
 
+Optionally, create a dedicated app user instead of using `root`:
+
+```sql
+CREATE USER 'contact_app'@'localhost' IDENTIFIED BY 'choose_a_password';
+GRANT ALL PRIVILEGES ON contact_db.* TO 'contact_app'@'localhost';
+FLUSH PRIVILEGES;
+```
+
 ## 2. Backend setup
 
 The backend reads DB connection details from environment variables
