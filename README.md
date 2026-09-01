@@ -5,7 +5,7 @@ operations for contacts (name, address, phone).
 
 - **Frontend:** React (Vite)
 - **Backend:** Java (Spring Boot, REST API)
-- **Database:** MySQL
+- **Database:** PostgreSQL
 
 ## Project structure
 
@@ -20,26 +20,29 @@ CRUD/
 
 - Java 21+ and Maven
 - Node.js 18+ and npm
-- MySQL 8+ running locally (or reachable)
+- PostgreSQL 14+ running locally (or reachable)
 
 ## 1. Database setup
 
-Create the database (Hibernate will also auto-create it/the table on
-startup, but you can run this manually if you prefer):
+Create the database, then load the schema (Hibernate will also
+auto-create the table on startup, but you can run this manually if
+you prefer):
 
 ```bash
-mysql -u root -p < database/schema.sql
+createdb contact_db
+psql -d contact_db -f database/schema.sql
 ```
 
-This creates a `contact_db` database with a `contacts` table
-(`id`, `name`, `address`, `phone`).
+This creates a `contacts` table (`id`, `name`, `address`, `phone`)
+inside `contact_db`.
 
-Optionally, create a dedicated app user instead of using `root`:
+Optionally, create a dedicated app user instead of using the default
+`postgres` user:
 
 ```sql
-CREATE USER 'contact_app'@'localhost' IDENTIFIED BY 'choose_a_password';
-GRANT ALL PRIVILEGES ON contact_db.* TO 'contact_app'@'localhost';
-FLUSH PRIVILEGES;
+CREATE USER contact_app WITH PASSWORD 'choose_a_password';
+GRANT ALL PRIVILEGES ON DATABASE contact_db TO contact_app;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO contact_app;
 ```
 
 ## 2. Backend setup
@@ -50,9 +53,9 @@ The backend reads DB connection details from environment variables
 | Variable        | Default        |
 |------------------|----------------|
 | `DB_HOST`        | `localhost`    |
-| `DB_PORT`        | `3306`         |
+| `DB_PORT`        | `5432`         |
 | `DB_NAME`        | `contact_db`   |
-| `DB_USERNAME`    | `root`         |
+| `DB_USERNAME`    | `postgres`     |
 | `DB_PASSWORD`    | *(empty)*      |
 | `SERVER_PORT`    | `8080`         |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` |
@@ -61,7 +64,7 @@ Run it:
 
 ```bash
 cd backend
-DB_USERNAME=root DB_PASSWORD=yourpassword mvn spring-boot:run
+DB_USERNAME=postgres DB_PASSWORD=yourpassword mvn spring-boot:run
 ```
 
 The API will be available at `http://localhost:8080/api/contacts`.

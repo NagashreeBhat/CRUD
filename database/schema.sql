@@ -1,9 +1,9 @@
-CREATE DATABASE IF NOT EXISTS contact_db;
-
-USE contact_db;
+-- Run this after creating and connecting to the database, e.g.:
+--   createdb contact_db
+--   psql -d contact_db -f schema.sql
 
 CREATE TABLE IF NOT EXISTS contacts (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
     phone VARCHAR(20) NOT NULL
